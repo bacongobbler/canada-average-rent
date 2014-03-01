@@ -74,23 +74,17 @@ $(function () {
             .attr("class", function(d) { return "province " + d.properties.name.split(' ').join(''); })
             .attr("d", path);
 
-        // ADD PLACES ON MAP
-        svg.append("path")
-            .datum(places)
-            .attr("d", path)
-            .attr("class", "place");
-
         // LABEL PLACES
         svg.selectAll(".place-label")
             .data(places.features)
-            .enter().append("input")
+            .enter().append("circle")
             .attr("class", "place-button")
-            .attr("type", "button")
+            .attr("r", "2")
             .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
             .attr("name", function(d) { return d.properties.name; });
 
-        $('.place').on('click', function (e) {
-            alert("You clicked a province.");
+        $('.place-button').on('click', function (e) {
+            alert(e.toElement.attributes["name"].value);
         });
     });
 });

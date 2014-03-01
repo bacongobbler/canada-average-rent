@@ -1,12 +1,46 @@
 
-var dataset = [];
+var unfiltered_dataset = [];
+var filtered_dataset = [];
 
-// RETRIEVE DATASET FROM JSON
+// debugging function for dumping a dataset to the logger
+function dump_dataset(dataset) {
+    $.each(dataset, function(k, v) {
+        console.log(v);
+    });
+}
+
+// retrieve dataset from json object
 $.getJSON( "data/dataset.json", function(data) {
-    $.each( data, function( key, val ) {
-        dataset.push(val);
+    $.each( data, function( key, value ) {
+        unfiltered_dataset.push(value);
+        // use 2013 by default
+        if(value.year === '2013') {
+            filtered_dataset.push(value);
+        };
     });
 });
+
+// update the filtered dataset based on certain actions
+function update_dataset(){
+    // set reference to select elements
+    var year = $('#filter-year');
+    var unit = $('#filter-unit');
+    // check if user has made a selection on both dropdowns
+    if ( year.prop('selectedIndex') > 0 && unit.prop('selectedIndex') > 0 ) {
+        // clear filtered dataset
+        filtered_dataset = [];
+        $.each(unfiltered_dataset, function(key, value) {
+            if(value.year === year.val() && value.unit == unit.val()) {
+                filtered_dataset.push(value);
+            }
+        });
+        dump_dataset(filtered_dataset);
+    }
+};
+
+// set events on 
+$('#filter-year').on('change', update_dataset);
+$('#filter-unit').on('change', update_dataset);
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {

@@ -2,10 +2,6 @@
 
 DATA_SOURCE="http://www20.statcan.gc.ca/tables-tableaux/cansim/csv/00270040-eng.zip"
 
-isnumber() {
-    printf '%f' "$1" &>/dev/null && echo "this is a number" || echo "not a number";
-}
-
 wget $DATA_SOURCE -O dataset.zip
 unzip dataset.zip
 rm dataset.zip

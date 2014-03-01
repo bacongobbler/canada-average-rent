@@ -21,6 +21,23 @@
     <option value="Bachelor units">Bachelor units</option>
   </select>
 
+  <!-- City information modal dialog. -->
+  <div class="modal fade" id="city-info-modal" tabindex="-1" role="dialog" aria-labelledby="city-info-modal-title" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="city-info-modal-title"></h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+              <input type="button" class="btn btn-primary btn-green" value="Compare Data Later"></input>
+              <input type="button" class="btn btn-primary btn-blue" value="Done"></input>
+          </div>
+        </div>
+      </div>
+  </div>
+
   <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="http://d3js.org/d3.v3.min.js"></script>

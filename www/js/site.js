@@ -1,6 +1,12 @@
 
-var unfiltered_dataset = [];
-var filtered_dataset = [];
+var unfiltered_dataset = [],
+    filtered_dataset = [],
+    width = $(window).width(),
+    height = $(window).height(),
+    buttonRadius = 2,
+    svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
 
 // retrieve dataset from json object
 $.getJSON( "data/dataset.json", function(data) {
@@ -61,12 +67,16 @@ $('#filter-unit').on('change', update_dataset);
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
-    var width = $(window).width(),
-        height = $(window).height(),
-        svg = d3.select("body").append("svg")
-                .attr("width", width)
-                .attr("height", height);
-    
+    draw_map();
+
+    $('.place-button').on('click', function (e) {
+        var data = dataset_for_city(e.toElement.attributes["name"].value);
+
+        $()
+    });
+});
+
+function draw_map() {
     d3.json("data/canadamapprovinces.json", function(error, can) {
         var provinces = topojson.feature(can, can.objects.statelines),
             places = topojson.feature(can, can.objects.places),
@@ -76,8 +86,6 @@ $(function () {
                             .scale(2300)
                             .translate([width / 1.1, height / 2]),
             path = d3.geo.path().projection(projection);
-
-        path.pointRadius(2);
 
         // DRAW MAP
         svg.append("path")
@@ -91,26 +99,33 @@ $(function () {
             .attr("class", function(d) { return "province " + d.properties.name.split(' ').join(''); })
             .attr("d", path);
 
-        // LABEL PLACES
+        // ADD CLICKABLE CITIES
         svg.selectAll(".place-label")
             .data(places.features)
             .enter().append("circle")
             .attr("class", "place-button")
-            .attr("r", "2")
+            .attr("r", buttonRadius)
             .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
-            .attr("name", function(d) { return d.properties.name; });
-
-        $('.place-button').on('click', function (e) {
-            alert(e.toElement.attributes["name"].value);
-        });
+            .attr("name", function(d) { return d.properties.name; })
+            .attr("data-toggle", "modal")
+            .attr("data-target", "#city-info-modal");
     });
-});
+}
 
+// UPDATE CIRCLE DEMOGRAPHIC
+function update_demographic() {
+    // SET RADIUS FOR EACH CIRCLE PER AVG. PRICE
 
+    //SORT FROM LARGEST TO SMALLEST
 
-// CLICK ABOUT BUTTON EVENT
-
-// CLICK COMPARE BUTTON EVENT
+    // DRAW THE CIRCLES
+    svg.selectAll(".place-demographic")
+        .data(places.features)
+        .enter().append("circle")
+        .attr("class", function(d) { return "rent-demographic " + d.properties.color; } )
+        .attr("r", function(d) { return d.properties.radius; })
+        .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; });
+}
 
 // CLICK ADD-TO-COMPARE BUTTON EVENT
 

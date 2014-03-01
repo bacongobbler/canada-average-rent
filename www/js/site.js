@@ -10,6 +10,7 @@ var unfiltered_dataset = [],
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
+
     // retrieve dataset from json object
     $.getJSON( "data/dataset.json", function(data) {
         $.each( data, function( key, value ) {
@@ -62,8 +63,6 @@ function dataset_for_city(city_name){
         classification = value.geographical_classification;
     });
     average_price /= unmerged_dataset.length;
-
-    if ()
 
     return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": average_price };
 }

@@ -1,4 +1,13 @@
 
+var dataset = [];
+
+// RETRIEVE DATASET FROM JSON
+$.getJSON( "data/dataset.json", function(data) {
+    $.each( data, function( key, val ) {
+        dataset.push(val);
+    });
+});
+
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
     var width = $(window).width(),

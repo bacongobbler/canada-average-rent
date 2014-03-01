@@ -15,7 +15,6 @@ Vagrant.configure("2") do |config|
     # install dependency prerequisites
     chef.add_recipe 'apt'
     chef.add_recipe 'build-essential'
-    chef.add_recipe 'xml'
 
     # install databases
     chef.add_recipe 'mysql::server'
@@ -25,7 +24,6 @@ Vagrant.configure("2") do |config|
 
     # install plugins
     chef.add_recipe 'apache2::mod_rewrite'
-    chef.add_recipe 'php::module_mysql'
 
     # install dev tools
     chef.add_recipe 'git'

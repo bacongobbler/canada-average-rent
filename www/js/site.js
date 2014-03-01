@@ -2,13 +2,6 @@
 var unfiltered_dataset = [];
 var filtered_dataset = [];
 
-// debugging function for dumping a dataset to the logger
-function dump_dataset(dataset) {
-    $.each(dataset, function(k, v) {
-        console.log(v);
-    });
-}
-
 // retrieve dataset from json object
 $.getJSON( "data/dataset.json", function(data) {
     $.each( data, function( key, value ) {
@@ -34,9 +27,33 @@ function update_dataset(){
                 filtered_dataset.push(value);
             }
         });
-        dump_dataset(filtered_dataset);
     }
 };
+
+function dataset_for_city(city_name){
+    var city_dataset = {};
+    var unmerged_dataset = [];
+    // retrieve all datasets that are from this city
+    $.each(filtered_dataset, function(key, value) {
+        if(value.city === city_name) {
+            // scrub json to display only the important stuff
+            var tmp = { "coordinates": value.coordinates, "geographical_classification": value.geographical_classification, "price": value.price };
+            unmerged_dataset.push(tmp);
+        }
+    });
+    // average out the price of all datasets for this city and return
+    var average_price = 0;
+    var coords = "";
+    var classification = "";
+    $.each(unmerged_dataset, function(key, value) {
+        average_price += parseInt(value.price, 10);
+        coords = value.coordinates;
+        classification = value.geographical_classification;
+    });
+    average_price /= unmerged_dataset.length;
+
+    return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": average_price };
+}
 
 // set events on 
 $('#filter-year').on('change', update_dataset);

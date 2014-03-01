@@ -1,23 +1,31 @@
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
-    var width = 800,
-        height = 600,
+    var width = $(window).width(),
+        height = $(window).height(),
         svg = d3.select("body").append("svg")
                 .attr("width", width)
                 .attr("height", height);
     
-    d3.json("data/canada.json", function(error, can) {
-        var subunits = topojson.feature(can, can.objects.subunits),
-            projection = d3.geo.azimuthalEqualArea()
-                            .rotate([100, -45])
-                            .center([5, 20])
-                            .scale(800)
-                            .translate([w/2, h/2]),
+    d3.json("data/canadamapprovinces.json", function(error, can) {
+        var provinces = topojson.feature(can, can.objects.statelines),
+            projection = d3.geo.albers()
+                            .center([0, 55.4])
+                            .parallels([50, 60])
+                            .scale(1250)
+                            .translate([width / 2, height / 2]),
             path = d3.geo.path().projection(projection);
 
+        // DRAW MAP
         svg.append("path")
-            .datum(subunits)
+            .datum(provinces)
+            .attr("d", path);
+
+        // COLOUR-CODE MAP
+        svg.selectAll(".subunit")
+            .data(provinces.features)
+            .enter().append("path")
+            .attr("class", function(d) { return "subunit " + d.id; })
             .attr("d", path);
     });
 });
@@ -33,11 +41,3 @@ $(function () {
 // LEGEND APPEAR/DISAPPEAR
 
 // JUMBOTRON APPEAR/DISAPPEAR
-
-// RETRIEVE DATASET FROM JSON
-$.getJSON( "data/dataset.json", function(data) {
-  var items = [];
-  $.each( data, function( key, val ) {
-    items.push(val);
-  });
-});

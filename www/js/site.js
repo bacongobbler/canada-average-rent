@@ -33,3 +33,11 @@ $(function () {
 // LEGEND APPEAR/DISAPPEAR
 
 // JUMBOTRON APPEAR/DISAPPEAR
+
+// RETRIEVE DATASET FROM JSON
+$.getJSON( "data/dataset.json", function(data) {
+  var items = [];
+  $.each( data, function( key, val ) {
+    items.push(val);
+  });
+});

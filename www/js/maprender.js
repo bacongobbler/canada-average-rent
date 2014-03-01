@@ -1,19 +1,23 @@
 
 $(function () {
-    var rawUrl = window.location.href.split( '/' ),
-        url = rawUrl[0] + '://' + rawUrl[2] + '/';
+    var width = $(document).width(),
+        height = $(document).height(),
+        svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+    
+    d3.json("data/canadamap.json", function(error, can) {
+        var subunits = topojson.feature(can, can.objects.subunits),
+            projection = d3.geo.albers()
+                            .center([0, 55.4])
+                            .parallels([50, 60])
+                            .scale(1250)
+                            .translate([width / 2, height / 2]),
+            path = d3.geo.path().projection(projection);
 
-    var width = 960,
-        height = 1160;
-    
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height);
-    
-    d3.json(url + "data/canadamap.json", function(error, can) {
         svg.append("path")
-            .datum(topojson.feature(can, can.objects.subunits))
-            .attr("d", d3.geo.path().projection(d3.geo.mercator()));
+            .datum(subunits)
+            .attr("d", path);
     });
 });
 

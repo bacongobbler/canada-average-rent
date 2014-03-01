@@ -8,6 +8,10 @@ rm dataset.zip
 
 mv 00270040-eng.csv dataset.csv
 
+grep "British Columbia" dataset.csv > tmp.csv
+rm dataset.csv
+mv tmp.csv dataset.csv
+
 #begin writing out the json file
 echo "[" > dataset.json
 
@@ -20,7 +24,7 @@ do
         city=${city/\"/} 
         province=${province/\"/}
         price=${price/.*/}
-        printf '    {"year": %d, "city": "%s", "province": "%s", "geographical_classification": "%s", "structure": "%s", "unit":"%s", "vector": "%s", "coordinates": "%s", "price": %s },\n' "$year" "$city" "$province" "$geo_class" "$structure" "$unit" "$vector" "$coordinates" "$price" >> dataset.json
+        printf '    {"year": "%s", "city": "%s", "province": "%s", "geographical_classification": "%s", "structure": "%s", "unit": "%s", "vector": "%s", "coordinates": "%s", "price": "%s" },\n' "$year" "$city" "$province" "$geo_class" "$structure" "$unit" "$vector" "$coordinates" "$price" >> dataset.json
     fi
 done < dataset.csv
 

@@ -1,7 +1,8 @@
 
+// RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
-    var width = $(document).width(),
-        height = $(document).height(),
+    var width = $(window).width(),
+        height = $(window).height(),
         svg = d3.select("body").append("svg")
                 .attr("width", width)
                 .attr("height", height);
@@ -21,8 +22,14 @@ $(function () {
     });
 });
 
-//about click
+// CLICK ABOUT BUTTON EVENT
 
-//compare click
+// CLICK COMPARE BUTTON EVENT
 
-//add-to-compare click 
+// CLICK ADD-TO-COMPARE BUTTON EVENT
+
+// SET OR UNSET FILTERING EVENT
+
+// LEGEND APPEAR/DISAPPEAR
+
+// JUMBOTRON APPEAR/DISAPPEAR

@@ -3,20 +3,25 @@ var unfiltered_dataset = [],
     filtered_dataset = [],
     width = $(window).width(),
     height = $(window).height(),
-    buttonRadius = 2,
+    buttonRadius = 3.5,
     svg = d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height);
 
-// retrieve dataset from json object
-$.getJSON( "data/dataset.json", function(data) {
-    $.each( data, function( key, value ) {
-        unfiltered_dataset.push(value);
-        // use 2013 by default
-        if(value.year === '2013') {
-            filtered_dataset.push(value);
-        };
+// RENDER MAP BY DEFAULT DIMENSIONS
+$(function () {
+    // retrieve dataset from json object
+    $.getJSON( "data/dataset.json", function(data) {
+        $.each( data, function( key, value ) {
+            unfiltered_dataset.push(value);
+            // use 2013 by default
+            if(value.year === '2013') {
+                filtered_dataset.push(value);
+            };
+        });
     });
+
+    draw_map();
 });
 
 // update the filtered dataset based on certain actions
@@ -58,23 +63,14 @@ function dataset_for_city(city_name){
     });
     average_price /= unmerged_dataset.length;
 
+    if ()
+
     return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": average_price };
 }
 
 // set events on 
 $('#filter-year').on('change', update_dataset);
 $('#filter-unit').on('change', update_dataset);
-
-// RENDER MAP BY DEFAULT DIMENSIONS
-$(function () {
-    draw_map();
-
-    $('.place-button').on('click', function (e) {
-        var data = dataset_for_city(e.toElement.attributes["name"].value);
-
-        $()
-    });
-});
 
 function draw_map() {
     d3.json("data/canadamapprovinces.json", function(error, can) {
@@ -106,9 +102,21 @@ function draw_map() {
             .attr("class", "place-button")
             .attr("r", buttonRadius)
             .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
-            .attr("name", function(d) { return d.properties.name; })
-            .attr("data-toggle", "modal")
-            .attr("data-target", "#city-info-modal");
+            .attr("name", function(d) { return d.properties.name; });
+
+        $('.place-button').on('click', function (e) {
+            var city = e.toElement.attributes["name"].value,
+                data = dataset_for_city(city);
+        
+            debugger;
+            $('.modal-title').html(city);
+            $('.modal-body').html('<ul>' +
+                '<li><strong>Canada Geographical Classification: </strong>' + data.geographical_classification + '</li>' +
+                '<li><strong>Coordinates: </strong>' + data.coordinates + '</li>' + 
+                '<li><strong>Average Price: </strong>' + data.average_price + '</li>' +
+            '</ul>');
+            $('#city-info-modal').modal('show');
+        });
     });
 }
 

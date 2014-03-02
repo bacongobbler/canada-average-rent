@@ -12,7 +12,7 @@ This project utilizes [vagrant][1] and [berkshelf][2] to quickly fire up a serve
     $ berks install
     $ vagrant up
 
-After the server has booted up, you can go to http://localhost:3000/ to view the application.
+After the server has booted up, you can go to [http://localhost:3000/](http://localhost:3000/) to view the application.
 
 
 [1]: http://www.vagrantup.com/

@@ -85,7 +85,7 @@ function update_dataset(){
         unit = $('#filter-unit');
 
     // check if user has made a selection on both dropdowns
-    if ( year.prop('selectedIndex') > 0 && unit.prop('selectedIndex') > 0 ) {
+    if ( year.prop('selectedIndex') >= 0 && unit.prop('selectedIndex') >= 0 ) {
         // clear filtered dataset
         filtered_dataset = [];
         $.each(unfiltered_dataset, function(key, value) {

@@ -20,9 +20,8 @@ $(function () {
                 filtered_dataset.push(value);
             };
         });
+        draw_map();
     });
-
-    draw_map();
 });
 
 // update the filtered dataset based on certain actions
@@ -71,8 +70,30 @@ function dataset_for_city(city_name){
 $('#filter-year').on('change', update_dataset);
 $('#filter-unit').on('change', update_dataset);
 
+function city_exists_in_dataset(city_name) {
+    var retval = false;
+    $.each(unfiltered_dataset, function(k, v) {
+        if(city_name === v.city) {
+            retval = true;
+            return false;
+        }
+    });
+    return retval;
+}
+
 function draw_map() {
     d3.json("data/canadamapprovinces.json", function(error, can) {
+
+        // only load the cities that exist in the dataset
+        var new_geometries = [];
+        $.each(can.objects.places.geometries, function(k, v) {
+            if(city_exists_in_dataset(v.properties.name)) {
+                new_geometries.push(v);
+            }
+        });
+
+        can.objects.places.geometries = new_geometries;
+
         var provinces = topojson.feature(can, can.objects.statelines),
             places = topojson.feature(can, can.objects.places),
             projection = d3.geo.albers()

@@ -116,7 +116,7 @@ function dataset_for_city(city_name){
         classification = "no data";
     }
 
-    return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": average_price };
+    return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": "$" + average_price };
 }
 
 // set events on 

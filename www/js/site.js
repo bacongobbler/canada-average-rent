@@ -104,6 +104,7 @@ function dataset_for_city(city_name){
         classification = value.geographical_classification;
     });
     average_price /= unmerged_dataset.length;
+    average_price = average_price.toFixed(2);
 
     if(isNaN(average_price)) {
         average_price = "no data";

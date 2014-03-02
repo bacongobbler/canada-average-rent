@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CODE: Rent Average Map</title>
+  <title>CODE CanRent: Rent Average Map</title>
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
   <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body>
-  <select id="filter-year">
-    <option value="">Select a value...</option>
-  </select>
-  <select id="filter-unit">
-    <option value="">Select a value...</option>
-  </select>
-  <a class="btn btn-danger" href="about.html">About</a>
-  <a class="btn btn-success" href="compare.html">Compare Data</a>
+  <div class="panel panel-default control-panel">
+    <div class="panel-heading"><h4><strong>CanRent</strong></h4></div>
+    <div class="panel-body">
+      <div class="control-panel-item">
+        <strong>Year</strong><br/>
+        <select id="filter-year">
+          <option value="">Select a value...</option>
+        </select>
+      </div>
+      <div class="control-panel-item">
+        <strong>Room Type</strong><br/>
+        <select id="filter-unit">
+          <option value="">Select a value...</option>
+        </select>
+      </div>
+      <div class="control-panel-item">
+        <a class="btn btn-danger" data-toggle="modal" data-target="#about-info-modal">About</a>
+      </div>
+      <div class="control-panel-item">
+        <a class="btn btn-success compare-data-list">Compare Data</a>
+      </div>
+    </div>
+  </div>
 
   <!-- City information modal dialog. -->
   <div class="modal fade" id="city-info-modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -22,11 +37,56 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title"></h4>
+          <h4 class="modal-title city-info-title"></h4>
         </div>
-        <div class="modal-body"></div>
+        <div class="modal-body city-info-body"></div>
         <div class="modal-footer">
-          <input type="button" class="btn btn-success compare-data" value="Compare Data Later"></input>
+          <input type="button" class="btn btn-success compare-data" value="Add to Compare List"></input>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About modal dialog. -->
+  <div class="modal fade" id="about-info-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">About CanRent</h4>
+        </div>
+        <div class="modal-body">
+          <h1>About the Project</h1>
+          <p>This application visualizes the average rental costs for living in Canada as specified at <a href="http://data.gc.     ca/data/en/dataset/1146388b-a150-4e70-98ec-eb40cb9083c8">http://data.gc.ca/data/en/dataset/1146388b-a150-4e70-98ec-eb40cb9083c8</a>     .</p>
+          <h1>About Us</h1>
+          <div class="span6">
+            <h3>Matthew Fisher</h3>
+            <img src="http://www.gravatar.com/avatar/65e1d16c6d56dd57fa47b30dcb429eed" alt="Matthew Fisher" title="Matthew Fisher" class="img-circle" />
+            <p>Matthew Fisher is <a href="http://opdemand.com">OpDemand</a>&#39;s Senior Software Developer. Born and raised on Vancouver Island, BC, Matthew prefers Python and Ruby as his weapons of choice. In December 2012, he graduated from the British Columbia Institute of Technology with a Diploma in Computer Systems Technology. He has previously completed co-op placements doing IT/System Administration work with <a href="http://www.coreit.ca/">Core Information Technology</a> and <a href="http://aeroinfo.com/">AeroInfo Systems</a>, where he received an AeroInfo Award of Excellence. He joined <a href="http://www.activestate.com/">ActiveState</a> in February 2013 as their Technical Product Manager, and eventually became OpDemand&#39;s Senior Software Developer in March, 2014. Matthew enjoys hacking away at projects on his own spare time, and really loves cheese. You can follow him on Twitter via <a href="https://twitter.com/bacongobbler">@bacongobbler</a>.</p>
+          </div>
+          <div class="span6">
+            <h3>Jason Bolanos</h3>
+            <img src="http://www.gravatar.com/avatar/8f03bd3b79d352494755090267d6d691" alt="Jason Bolanos" title="Jason Bolanos" class="img-circle" />
+            <p>Jason Bolanos is a Vancouver-based web application developer specializing in software-as-a-service architectures. His forte is .NET/C#, Ruby, and JavaScript. He, along with Matthew, is an alumnus of the British Columbia Institute of Technology, having completed a Diploma in Computer Systems Technology in December 2012. Jason enjoys creative writing and hacking away at small pet projects in his free time, and is looking to jump into open-source projects as a hobby. You can catch Jason on Twitter at <a href="https://twitter.com/Chocolancer">@Chocolancer</a>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare data modal dialog. -->
+  <div class="modal fade" id="compare-data-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Compare Data</h4>
+        </div>
+        <div class="modal-body compare-data-body"></div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-success compare-data-delete" value="Clear All Comparison Data"></input>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@
 var unfiltered_dataset = [],
     filtered_dataset = [],
     compare_data_key = 'CODE_compare-data',
+    delimiter = '||',
     width = $(window).width(),
     height = $(window).height(),
     buttonRadius = 3.5,
@@ -11,8 +12,6 @@ var unfiltered_dataset = [],
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
-    localStorage[compare_data_key] = [];
-
     // retrieve dataset from json object
     $.getJSON( "data/dataset.json", function(data) {
         $.each( data, function( key, value ) {
@@ -22,7 +21,9 @@ $(function () {
                 filtered_dataset.push(value);
             };
         });
+        
         draw_map();
+
         // create a dropdown list from the unfiltered dataset
         for(var i = 0; i < unfiltered_dataset.length; i++) {
             if( ! value_exists('#filter-year option', unfiltered_dataset[i].year)) {
@@ -36,6 +37,12 @@ $(function () {
         }
     });
 });
+
+// set events on 
+$('#filter-year').on('change', update_dataset);
+$('#filter-unit').on('change', update_dataset);
+$('.compare-data-list').on('click', list_comparison_data);
+$('.compare-data-delete').on('click', delete_localstorage);
 
 // sort a dropdown list by its value
 function sort_dropdown_by_value(id) {
@@ -55,23 +62,12 @@ function sort_dropdown_by_value(id) {
     });
 }
 
-// check if a certain value exists in an element
-function value_exists(element_id, value) {
-    var exists = false;
-    $(element_id).each(function(){
-        if (this.value == value) {
-            exists = true;
-            return false;
-        }
-    });
-    return exists;
-}
-
 // update the filtered dataset based on certain actions
 function update_dataset(){
     // set reference to select elements
-    var year = $('#filter-year');
-    var unit = $('#filter-unit');
+    var year = $('#filter-year'),
+        unit = $('#filter-unit');
+
     // check if user has made a selection on both dropdowns
     if ( year.prop('selectedIndex') > 0 && unit.prop('selectedIndex') > 0 ) {
         // clear filtered dataset
@@ -85,24 +81,34 @@ function update_dataset(){
 };
 
 function dataset_for_city(city_name){
-    var city_dataset = {};
-    var unmerged_dataset = [];
+    var city_dataset = {},
+        unmerged_dataset = [],
+        average_price = 0,
+        coords = "",
+        classification = "",
+        year = "",
+        unit = "";
+
     // retrieve all datasets that are from this city
     $.each(filtered_dataset, function(key, value) {
         if(value.city === city_name) {
             // scrub json to display only the important stuff
-            var tmp = { "coordinates": value.coordinates, "geographical_classification": value.geographical_classification, "price": value.price };
+            var tmp = { "coordinates": value.coordinates, 
+                        "geographical_classification": value.geographical_classification, 
+                        "price": value.price,
+                        "year": value.year,
+                        "unit": value.unit };
             unmerged_dataset.push(tmp);
         }
     });
+
     // average out the price of all datasets for this city and return
-    var average_price = 0;
-    var coords = "";
-    var classification = "";
     $.each(unmerged_dataset, function(key, value) {
         average_price += parseInt(value.price, 10);
         coords = value.coordinates;
         classification = value.geographical_classification;
+        year = value.year;
+        unit = value.unit;
     });
     average_price /= unmerged_dataset.length;
     average_price = average_price.toFixed(2);
@@ -116,23 +122,44 @@ function dataset_for_city(city_name){
     if(classification === "") {
         classification = "no data";
     }
+    if(year === "") {
+        year = "no data";
+    }
+    if(unit === "") {
+        unit = "no data";
+    }
 
-    return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": "$" + average_price };
+    return { "city": city_name, 
+             "coordinates": coords, 
+             "geographical_classification": classification, 
+             "average_price": "$" + average_price,
+             "year": year,
+             "unit": unit };
 }
 
-// set events on 
-$('#filter-year').on('change', update_dataset);
-$('#filter-unit').on('change', update_dataset);
-
 function city_exists_in_dataset(city_name) {
-    var retval = false;
+    var exists = false;
+
     $.each(unfiltered_dataset, function(k, v) {
         if(city_name === v.city) {
-            retval = true;
+            exists = true;
             return false;
         }
     });
-    return retval;
+    return exists;
+}
+
+// check if a certain value exists in an element
+function value_exists(element_id, value) {
+    var exists = false;
+    
+    $(element_id).each(function(){
+        if (this.value == value) {
+            exists = true;
+            return false;
+        }
+    });
+    return exists;
 }
 
 function draw_map() {
@@ -182,8 +209,8 @@ function draw_map() {
             var city = e.toElement.attributes["name"].value,
                 data = dataset_for_city(city);
 
-            $('.modal-title').html(city);
-            $('.modal-body').html('<ul>' +
+            $('.city-info-title').html(city);
+            $('.city-info-body').html('<ul>' +
                 '<li><strong>Canada Geographical Classification: </strong>' + data.geographical_classification + '</li>' +
                 '<li><strong>Coordinates: </strong>' + data.coordinates + '</li>' + 
                 '<li><strong>Average Price: </strong>' + data.average_price + '</li>' +
@@ -198,37 +225,88 @@ function draw_map() {
     });
 }
 
-// UPDATE CIRCLE DEMOGRAPHIC
-function update_demographic() {
-    // SET RADIUS FOR EACH CIRCLE PER AVG. PRICE
+function add_to_localstorage (data) {
+    var currentData = load_localstorage();
 
-    //SORT FROM LARGEST TO SMALLEST
-
-    // DRAW THE CIRCLES
-    svg.selectAll(".place-demographic")
-        .data(places.features)
-        .enter().append("circle")
-        .attr("class", function(d) { return "rent-demographic " + d.properties.color; } )
-        .attr("r", function(d) { return d.properties.radius; })
-        .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; });
+    if (check_unique(data, currentData)) {
+        debugger;
+        currentData.push(JSON.stringify(data));
+        currentData = currentData.join(delimiter);
+        localStorage[compare_data_key] = currentData;
+    }
 }
 
-function add_to_localstorage (data) {
+function list_comparison_data () {
+    var div_template = '<div class="panel panel-default"><div class="panel-body">' +
+        '<h2>{city}</h2>' +
+        '<ul>' +
+            '<li><strong>Year: </strong>{year}</li>' +
+            '<li><strong>Canada Geographical Classification: </strong>{geo}</li>' +
+            '<li><strong>Coordinates: </strong>{coord}</li>' + 
+            '<li><strong>Average Price: </strong>{avgprice}</li>' +
+            '<li><strong>Room Type: </strong>{unit}</li>' +
+        '</ul>' +
+        '</div></div>',
+        currentData = load_localstorage(),
+        formattedHtml = '';
+
+    if (currentData !== '') {
+        for (var i in currentData) {
+            var formattedJson = JSON.parse(currentData[i]);
+
+            formattedHtml += div_template.replace('{city}', formattedJson.city)
+                                         .replace('{year}', formattedJson.year)
+                                         .replace('{geo}', formattedJson.geographical_classification)
+                                         .replace('{coord}', formattedJson.coordinates)
+                                         .replace('{avgprice}', formattedJson.average_price)
+                                         .replace('{unit}', formattedJson.unit);
+        }
+    }
+    else {
+        formattedHtml = '<h2>There is no data to compare at the moment. Try adding some!</h2>';
+    }
+
+    $('.compare-data-body').html(formattedHtml);
+    $('#compare-data-modal').modal('show');
+}
+
+function load_localstorage() {
     try {
         var currentData = localStorage[compare_data_key];
 
         if (currentData !== '') {
-            currentData = currentData.split('||');
-            currentData.push(JSON.stringify(data));
-            currentData = currentData.join('||');
+            currentData = currentData.split(delimiter);
         }
         else{
-            currentData = JSON.stringify(data);
+            currentData = [];
         }
 
-        localStorage[compare_data_key] = currentData;
+        return currentData;
     }
     catch (e) {
         alert("It doesn't look like this browser supports local storage. This application requires local storage to store compare data.");
     }
+}
+
+function delete_localstorage() {
+    localStorage[compare_data_key] = [];
+    $('#compare-data-modal').modal('hide');
+}
+
+function check_unique (data, currentData) {
+    var isUnique = true;
+
+    for (var i in currentData) {
+        var currentDataItem = JSON.parse(currentData[i]);
+        if (data.city === currentDataItem.city &&
+            data.year === currentDataItem.year &&
+            data.geographical_classification === currentDataItem.geographical_classification &&
+            data.coordinates === currentDataItem.coordinates &&
+            data.average_price === currentDataItem.average_price &&
+            data.unit == currentDataItem.unit) {
+            isUnique = false;
+        }
+    }
+
+    return isUnique;
 }

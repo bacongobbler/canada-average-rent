@@ -1,2 +1,10 @@
 .province.BritishColumbia { fill: #cdc; }
 li { list-style: none; }
+.control-panel {
+  position: absolute;
+  margin: 2em;
+  width: 15%;
+}
+.control-panel-item {
+  margin-bottom: 5px;
+}

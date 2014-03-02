@@ -1,6 +1,7 @@
 
 var unfiltered_dataset = [],
     filtered_dataset = [],
+    compare_data_key = 'CODE_compare-data',
     width = $(window).width(),
     height = $(window).height(),
     buttonRadius = 3.5,
@@ -136,6 +137,11 @@ function draw_map() {
                 '<li><strong>Average Price: </strong>' + data.average_price + '</li>' +
             '</ul>');
             $('#city-info-modal').modal('show');
+            $('.compare-data').on('click', function (e) {
+                // ADD TO LOCAL STORAGE
+                $('#city-info-modal').modal('hide');
+            });
+
         });
     });
 }

@@ -22,8 +22,49 @@ $(function () {
             };
         });
         draw_map();
+        // create a dropdown list from the unfiltered dataset
+        for(var i = 0; i < unfiltered_dataset.length; i++) {
+            if( ! value_exists('#filter-year option', unfiltered_dataset[i].year)) {
+                $('#filter-year').append($('<option></option>').val(unfiltered_dataset[i].year).html(unfiltered_dataset[i].year));
+            }
+            // sort numerically by year
+            sort_dropdown_by_value('#filter-year');
+            if( ! value_exists('#filter-unit option', unfiltered_dataset[i].unit)) {
+                $('#filter-unit').append($('<option></option>').val(unfiltered_dataset[i].unit).html(unfiltered_dataset[i].unit));
+            }
+        }
     });
 });
+
+// sort a dropdown list by its value
+function sort_dropdown_by_value(id) {
+    // Loop for each select element on the page.
+    $(id).each(function() {
+
+        // Keep track of the selected option.
+        var selectedValue = $(this).val();
+
+        // Sort all the options by value
+        $(this).html($("option", $(this)).sort(function(a, b) {
+            return a.value == b.value ? 0 : a.value < b.value ? -1 : 1
+        }));
+
+        // Select one option.
+        $(this).val(selectedValue);
+    });
+}
+
+// check if a certain value exists in an element
+function value_exists(element_id, value) {
+    var exists = false;
+    $(element_id).each(function(){
+        if (this.value == value) {
+            exists = true;
+            return false;
+        }
+    });
+    return exists;
+}
 
 // update the filtered dataset based on certain actions
 function update_dataset(){

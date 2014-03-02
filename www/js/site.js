@@ -64,6 +64,16 @@ function dataset_for_city(city_name){
     });
     average_price /= unmerged_dataset.length;
 
+    if(isNaN(average_price)) {
+        average_price = "no data";
+    }
+    if(coords === "") {
+        coords = "no data";
+    }
+    if(classification === "") {
+        classification = "no data";
+    }
+
     return { "city": city_name, "coordinates": coords, "geographical_classification": classification, "average_price": average_price };
 }
 

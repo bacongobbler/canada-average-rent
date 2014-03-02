@@ -11,6 +11,7 @@ var unfiltered_dataset = [],
 
 // RENDER MAP BY DEFAULT DIMENSIONS
 $(function () {
+    localStorage[compare_data_key] = [];
 
     // retrieve dataset from json object
     $.getJSON( "data/dataset.json", function(data) {
@@ -180,8 +181,7 @@ function draw_map() {
         $('.place-button').on('click', function (e) {
             var city = e.toElement.attributes["name"].value,
                 data = dataset_for_city(city);
-        
-            debugger;
+
             $('.modal-title').html(city);
             $('.modal-body').html('<ul>' +
                 '<li><strong>Canada Geographical Classification: </strong>' + data.geographical_classification + '</li>' +
@@ -189,11 +189,11 @@ function draw_map() {
                 '<li><strong>Average Price: </strong>' + data.average_price + '</li>' +
             '</ul>');
             $('#city-info-modal').modal('show');
-            $('.compare-data').on('click', function (e) {
-                // ADD TO LOCAL STORAGE
+
+            $('.compare-data').one('click', function (e) {
+                add_to_localstorage(data);
                 $('#city-info-modal').modal('hide');
             });
-
         });
     });
 }
@@ -213,10 +213,22 @@ function update_demographic() {
         .attr("transform", function(d) { return "translate(" + projection(d.geometry.coordinates) + ")"; });
 }
 
-// CLICK ADD-TO-COMPARE BUTTON EVENT
+function add_to_localstorage (data) {
+    try {
+        var currentData = localStorage[compare_data_key];
 
-// SET OR UNSET FILTERING EVENT
+        if (currentData !== '') {
+            currentData = currentData.split('||');
+            currentData.push(JSON.stringify(data));
+            currentData = currentData.join('||');
+        }
+        else{
+            currentData = JSON.stringify(data);
+        }
 
-// LEGEND APPEAR/DISAPPEAR
-
-// JUMBOTRON APPEAR/DISAPPEAR
+        localStorage[compare_data_key] = currentData;
+    }
+    catch (e) {
+        alert("It doesn't look like this browser supports local storage. This application requires local storage to store compare data.");
+    }
+}

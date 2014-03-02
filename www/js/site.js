@@ -73,18 +73,6 @@ function sort_dropdown_by_value(id) {
     });
 }
 
-// check if a certain value exists in an element
-function value_exists(element_id, value) {
-    var exists = false;
-    $(element_id).each(function(){
-        if (this.value == value) {
-            exists = true;
-            return false;
-        }
-    });
-    return exists;
-}
-
 function on_change() {
     update_dataset()
     update_colors()
@@ -113,10 +101,10 @@ function update_colors() {
     var circles = $('circle');
     var high_value = get_high_value(filtered_dataset);
     var low_value = get_low_value(filtered_dataset);
-    var hax_value = "#0F0";
+    var hex_value = "#0F0";
     $.each(circles, function(k, v) {
         var dataset = dataset_for_city(v.attributes.name.value);
-        var scale = get_scale(parseInt(dataset.average_price), high_value, low_value);
+        var scale = get_scale(parseInt(dataset.average_price.replace('$', '')), high_value, low_value);
         hex_value = get_between_colour_by_percent(
             scale,
             0x0F0,

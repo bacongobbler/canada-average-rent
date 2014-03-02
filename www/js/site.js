@@ -17,7 +17,7 @@ $(function () {
         $.each( data, function( key, value ) {
             unfiltered_dataset.push(value);
             // use 2013 by default
-            if(value.year === '2013') {
+            if(value.year === '2013' && value.unit === 'One bedroom units') {
                 filtered_dataset.push(value);
             };
         });
@@ -34,6 +34,17 @@ $(function () {
             if( ! value_exists('#filter-unit option', unfiltered_dataset[i].unit)) {
                 $('#filter-unit').append($('<option></option>').val(unfiltered_dataset[i].unit).html(unfiltered_dataset[i].unit));
             }
+            // set default dropdown values
+            $.each($('#filter-year option'), function(k, v) {
+                if(v.value === '2013') {
+                    v.setAttribute('selected', 'true');
+                }
+            });
+            $.each($('#filter-unit option'), function(k, v) {
+                if(v.value === 'One bedroom units') {
+                    v.setAttribute('selected', 'true');
+                }
+            });
         }
     });
 });
@@ -114,7 +125,7 @@ function update_colors() {
             .toUpperCase();
         hex_value = sprintf("%03s", hex_value);
         v.setAttribute('style', 'fill: ' + hex_value);
-        v.setAttribute('r', 10 * scale + 3);
+        v.setAttribute('r', Math.abs(10 * scale + 3));
     });
 }
 
